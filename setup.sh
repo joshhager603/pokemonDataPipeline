@@ -25,7 +25,7 @@ AIRFLOW_DAG_PATH="$HOME/airflow/dags"
 mkdir -p $AIRFLOW_DAG_PATH
 
 # copy the dag file to the dag directory
-cp employee_data_dag.py ~/airflow/dags
+cp pokemon_data_dag.py ~/airflow/dags
 
 # create the needed database in postgres
 python3 create_database_setup.py

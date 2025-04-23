@@ -1,10 +1,8 @@
 import psycopg2
-from psycopg2 import sql
 import pandas as pd
 from scripts.constants import *
 from scripts.common_functions import create_sqlalchemy_engine
-import kagglehub
-from kagglehub import KaggleDatasetAdapter
+import os
 
 def load_raw_data():
     try:
@@ -67,16 +65,15 @@ def load_raw_data():
         connection.commit()
         print(f"Table {RAW_DATA_TABLE_NAME} is created.")
 
+        # fetch the raw data from kaggle
+        # need to use a system call since Airflow doesn't play nice with API calls inside DAGs
+        os.system('python3.11 fetch_raw_dataset.py')
+
         # load the raw data into the raw data table
-        df: pd.DataFrame        
-        df = kagglehub.load_dataset(KaggleDatasetAdapter.PANDAS, "rounakbanik/pokemon", "pokemon.csv")
+        df = pd.read_csv(RAW_DATA_FILEPATH)
 
         df.to_sql(RAW_DATA_TABLE_NAME, engine, if_exists='replace', index=False)
         print("Raw data has been inserted into the raw data table.")
-
-        df.to_csv(RAW_DATA_FILEPATH)
-        print(f"Raw data has been written to {RAW_DATA_FILEPATH}")
-
 
     except psycopg2.Error as e:
         print("An error occurred:", e)

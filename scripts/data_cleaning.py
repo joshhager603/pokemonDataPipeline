@@ -1,7 +1,7 @@
 from scripts import common_functions
 from scripts.constants import *
 import pandas as pd
-from scripts.pokeapi_utils import get_pokemon_height, get_pokemon_weight
+import subprocess
 
 TYPE1_GROUP = ['flying', 'poison', 'ground', 'fairy', 'psychic', 'fighting', 'steel',
               'dark', 'grass', 'water', 'dragon', 'ice', 'rock', 'ghost', 'fire', 'electric',
@@ -14,6 +14,14 @@ TYPE2_GROUP = ['flying', 'poison', 'ground', 'fairy', 'psychic', 'fighting', 'st
 CAPTURE_RATE_CORRECTIONS = {
     '30 (Meteorite)255 (Core)': '30',
 }
+
+def fetch_pokemon_height(pokedex_number: str) -> str:
+    result = subprocess.run(["python3.11", "pokeapi_utils.py", "height", pokedex_number], capture_output=True, text=True)
+    return str(result.stdout.strip())
+
+def fetch_pokemon_weight(pokedex_number: str) -> str:
+    result = subprocess.run(["python3.11", "pokeapi_utils.py", "weight", pokedex_number], capture_output=True, text=True)
+    return str(result.stdout.strip())
 
 
 def manual_column_correct(df: pd.DataFrame, column_name: str, group: list[str]):
@@ -47,7 +55,7 @@ def clean_data() -> pd.DataFrame:
 
     # 2. supplement missing height values with data from PokeAPI
     df['height_m'] = df.apply(
-        lambda row: str(get_pokemon_height(int(row['pokedex_number']))) if pd.isna(row['height_m']) else row['height_m'],
+        lambda row: fetch_pokemon_height(str(row['pokedex_number'])) if pd.isna(row['height_m']) else row['height_m'],
         axis=1
     )
 
@@ -57,7 +65,7 @@ def clean_data() -> pd.DataFrame:
 
     # 4. supplement missing weight values with data from PokeAPI
     df['weight_kg'] = df.apply(
-        lambda row: str(get_pokemon_weight(int(row['pokedex_number']))) if pd.isna(row['weight_kg']) else row['weight_kg'],
+        lambda row: fetch_pokemon_weight(str(row['pokedex_number'])) if pd.isna(row['weight_kg']) else row['weight_kg'],
         axis=1
     )
 
