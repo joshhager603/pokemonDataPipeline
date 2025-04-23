@@ -52,7 +52,7 @@ def clean_data() -> pd.DataFrame:
     )
 
     # 3. supplement missing percentage_male values with average for that column
-    average_male = df['percentage_male'].astype(float).mean()
+    average_male = round(df['percentage_male'].astype(float).mean(), 1)
     df['percentage_male'] = df['percentage_male'].fillna(str(average_male))
 
     # 4. supplement missing weight values with data from PokeAPI
@@ -97,5 +97,24 @@ def clean_data() -> pd.DataFrame:
 
     # 8. convert is_legendary to booleans
     df['is_legendary'] = df['is_legendary'].astype(bool)
+
+    # 9. drop columns we don't care about
+    cols_to_drop = ['abilities','against_bug','against_dark','against_dragon','against_electric',
+                    'against_fairy','against_fight','against_fire','against_flying','against_ghost',
+                    'against_grass','against_ground','against_ice','against_normal','against_poison',
+                    'against_psychic','against_rock','against_steel','against_water'] 
+
+    df.drop(cols_to_drop, axis=1, inplace=True)
+
+    # 10. reorder columns to a more friendly order
+    new_col_order = ['pokedex_number', 'name', 'japanese_name', 'classification', 'type1', 'type2', 'height_m', 
+                     'weight_kg', 'hp', 'attack', 'defense', 'speed', 'sp_attack', 'sp_defense', 'base_egg_steps',
+                     'base_happiness', 'base_total', 'capture_rate', 'percentage_male', 'generation', 'is_legendary']
+    assert len(new_col_order) == len(column_type_mapping)
+
+    df = df[new_col_order]
+
+    # 11. reorder the rows by pokedex_number
+    df.sort_values(by='pokedex_number', ascending=True, inplace=True)
 
     return df

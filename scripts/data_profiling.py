@@ -9,7 +9,8 @@ def profile_column(df: pd.DataFrame,
                    check_for_groups: bool=False,
                    check_for_range: list[int]=None,
                    allow_duplicates=True,
-                   allow_blanks=True
+                   allow_blanks=True,
+                   five_number_summary=False
                    ):
     
     print(f"\n----- Profiling column {column_name} -----")
@@ -70,6 +71,15 @@ def profile_column(df: pd.DataFrame,
         print(f'* Found {num_empty + num_missing} empty or missing entries for column {column_name}')
         print()
 
+    if five_number_summary:
+        summary = pd.to_numeric(df[column_name], errors='coerce').quantile([0, 0.25, 0.5, 0.75, 1])
+        summary.index = ['Min', 'Q1', 'Median', 'Q3', 'Max']
+
+        print(f"* 5-Number Summary for column {column_name}:")
+        print(summary)
+        print()
+
+
 def pokemon_data_profile(df=None, classification_col_name='classfication'):
 
     if df is None:
@@ -82,25 +92,25 @@ def pokemon_data_profile(df=None, classification_col_name='classfication'):
     # checks for attack:
     # 1. No blanks
     # 2. All positive integers
-    profile_column(df, 'attack', data_format_regex="^[0-9]+$", allow_blanks=False)
+    profile_column(df, 'attack', data_format_regex="^[0-9]+$", allow_blanks=False, five_number_summary=True)
     print()
 
     # checks for base_egg_steps:
     # 1. No blanks
     # 2. All positive integers
-    profile_column(df, 'base_egg_steps', data_format_regex="^[0-9]+$", allow_blanks=False)
+    profile_column(df, 'base_egg_steps', data_format_regex="^[0-9]+$", allow_blanks=False, five_number_summary=True)
     print()
 
     # checks for base_happiness:
     # 1. No blanks
     # 2. All positive integers
-    profile_column(df, 'base_happiness', data_format_regex="^[0-9]+$", allow_blanks=False)
+    profile_column(df, 'base_happiness', data_format_regex="^[0-9]+$", allow_blanks=False, five_number_summary=True)
     print()
 
     # checks for base_total:
     # 1. No blanks
     # 2. All positive integers
-    profile_column(df, 'base_total', data_format_regex="^[0-9]+$", allow_blanks=False)
+    profile_column(df, 'base_total', data_format_regex="^[0-9]+$", allow_blanks=False, five_number_summary=True)
     print()
 
     # checks for capture_rate:
@@ -118,7 +128,7 @@ def pokemon_data_profile(df=None, classification_col_name='classfication'):
     # checks for defense:
     # 1. No blanks
     # 2. All positive integers
-    profile_column(df, 'defense', data_format_regex="^[0-9]+$", allow_blanks=False)
+    profile_column(df, 'defense', data_format_regex="^[0-9]+$", allow_blanks=False, five_number_summary=True)
     print()
 
     # checks for height_m:
@@ -130,7 +140,7 @@ def pokemon_data_profile(df=None, classification_col_name='classfication'):
     # checks for hp:
     # 1. No blanks
     # 2. All positive integers
-    profile_column(df, 'hp', data_format_regex="^[0-9]+$", allow_blanks=False)
+    profile_column(df, 'hp', data_format_regex="^[0-9]+$", allow_blanks=False, five_number_summary=True)
     print()
 
     # checks for japanese_name:
@@ -163,19 +173,19 @@ def pokemon_data_profile(df=None, classification_col_name='classfication'):
     # checks for sp_attack:
     # 1. No blanks
     # 2. All positive integers
-    profile_column(df, 'sp_attack', data_format_regex="^[0-9]+$", allow_blanks=False)
+    profile_column(df, 'sp_attack', data_format_regex="^[0-9]+$", allow_blanks=False, five_number_summary=True)
     print()
 
     # checks for sp_defense:
     # 1. No blanks
     # 2. All positive integers
-    profile_column(df, 'sp_defense', data_format_regex="^[0-9]+$", allow_blanks=False)
+    profile_column(df, 'sp_defense', data_format_regex="^[0-9]+$", allow_blanks=False, five_number_summary=True)
     print()
 
     # checks for speed:
     # 1. No blanks
     # 2. All positive integers
-    profile_column(df, 'speed', data_format_regex="^[0-9]+$", allow_blanks=False)
+    profile_column(df, 'speed', data_format_regex="^[0-9]+$", allow_blanks=False, five_number_summary=True)
     print()
 
     # checks for type1:
