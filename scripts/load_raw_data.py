@@ -69,16 +69,20 @@ def load_raw_data():
 
         # load the raw data into the raw data table
         df: pd.DataFrame        
-        df = kagglehub.load_dataset(KaggleDatasetAdapter.PANDAS, "rounakbanik/pokemon", RAW_DATA_FILEPATH)
+        df = kagglehub.load_dataset(KaggleDatasetAdapter.PANDAS, "rounakbanik/pokemon", "pokemon.csv")
 
         df.to_sql(RAW_DATA_TABLE_NAME, engine, if_exists='replace', index=False)
         print("Raw data has been inserted into the raw data table.")
+
+        df.to_csv(RAW_DATA_FILEPATH)
+        print(f"Raw data has been written to {RAW_DATA_FILEPATH}")
 
 
     except psycopg2.Error as e:
         print("An error occurred:", e)
 
-load_raw_data()
+if __name__ == '__main__':
+    load_raw_data()
 
 
 
